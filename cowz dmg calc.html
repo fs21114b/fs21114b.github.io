@@ -1,0 +1,184 @@
+damage from stats
+<input type="number" id="basedmg" min="2" value="2" onchange="math()"/>
+<!--div colsect>
+colossus level
+<input type="number" id="colossus" min="0" value="0" onchange="math()"/>
+
+weapon #1 damage
+<input type="number" id="w1d" min="0" value="0" onchange="math()"/>
+
+weapon #2 damage (if not a shield)
+<input type="number" id="w2d" min="0" value="0" onchange="math()"/>
+</div-->
+attack speed
+<input type="number" id="attackspeed" min="0" value="50" onchange="math()"/>
+surge level
+<input type="number" id="surge" min="0" value="0" onchange="math()"/>
+evenflow level
+<input type="number" id="evenflow" min="0" value="0" onchange="math()"/>
+convergence level (expects all elementals)
+<input type="number" id="convergence" min="0" value="0" onchange="math()"/>
+shatter level
+<input type="number" id="shatter" min="0" value="0" onchange="math()"/>
+cold damage
+<input type="number" id="cold" min="0" value="0" onchange="math()"/>
+fire damage
+<input type="number" id="fire" min="0" value="0" onchange="math()"/>
+lightning damage
+<input type="number" id="lightning" min="0" value="0" onchange="math()"/>
+shadow damage
+<input type="number" id="shadow" min="0" value="0" onchange="math()"/>
+enchant cold
+<input type="number" id="ecold" min="0" value="0" onchange="math()"/>
+enchant fire
+<input type="number" id="efire" min="0" value="0" onchange="math()"/>
+enchant lightning
+<input type="number" id="elightning" min="0" value="0" onchange="math()"/>
+enchant shadow
+<input type="number" id="eshadow" min="0" value="0" onchange="math()"/>
+crit damage
+<input type="number" id="crit" min="130" value="130" onchange="math()"/>
+first strike level
+<input type="number" id="firststrike" min="0" value="0" onchange="math()"/>
+whirlwind level
+<input type="number" id="whirlwind" min="0" value="0" onchange="math()"/>
+swipe level
+<input type="number" id="swipe" min="0" value="0" onchange="math()"/>
+<div id="output"></div>
+
+<script>
+function math()
+{
+	var basedmg = parseInt(document.getElementById('basedmg').value);
+	var attackspeed = parseInt(document.getElementById('attackspeed').value);
+	var surge = document.getElementById('surge').value;
+	var evenflow = document.getElementById('evenflow').value;
+	var convergence = document.getElementById('convergence').value;
+	var shatter = document.getElementById('shatter').value;
+	
+	var cold = parseInt(document.getElementById('cold').value);
+	var fire = parseInt(document.getElementById('fire').value);
+	var lightning = parseInt(document.getElementById('lightning').value);
+	var shadow = parseInt(document.getElementById('shadow').value);
+	var ecold = parseInt(document.getElementById('ecold').value);
+	var efire = parseInt(document.getElementById('efire').value);
+	var elightning = parseInt(document.getElementById('elightning').value);
+	var eshadow = parseInt(document.getElementById('eshadow').value);
+	var crit = parseInt(document.getElementById('crit').value);
+	var firststrike = parseInt(document.getElementById('firststrike').value);
+	var whirlwind = parseInt(document.getElementById('whirlwind').value);
+	var swipe = parseInt(document.getElementById('swipe').value);
+	var surgemult = 0;
+	function tristat(damage)
+	{
+		function critdmg(damage)
+		{
+			return damage * crit * 0.01;
+		}
+		function fsdmg(damage)
+		{
+			if (firststrike > 0)
+			{
+				return damage * (crit + firststrikecrit) * 0.01;
+			}
+			return damage * crit * 0.01;
+		}
+		return Math.round(damage) + " <b>" + Math.round(critdmg(damage)) + " (" + Math.round(fsdmg(damage)) + ")</b>"
+	}
+	if (surge > 0)
+	{
+		surgemult = 0.1 * (surge - 1) + 0.25;
+	}
+	var evenflowmult = 0;
+	if (evenflow > 0)
+	{
+		evenflowmult = 0.1 * (evenflow - 1) + 0.6;
+	}
+	var convergencemult = 0;
+	if (convergence > 0)
+	{
+		convergencemult = 0.1 * (convergence - 1) + 0.8;
+	}
+	var shattermult = 0;
+	if (shatter > 0)
+	{
+		shattermult = 0.08 * (shatter - 1) + 0.4;
+	}
+	var coldmult = 0;
+	if (ecold > 0)
+	{
+		coldmult = 0.05 * (ecold - 1) + 0.5;
+	}
+	var firemult = 0;
+	if (efire > 0)
+	{
+		firemult = 0.05 * (efire - 1) + 0.5;
+	}
+	var lightningmult = 0;
+	if (elightning > 0)
+	{
+		lightningmult = 0.05 * (elightning - 1) + 0.5;
+	}
+	var shadowmult = 0;
+	if (eshadow > 0)
+	{
+		shadowmult = 0.05 * (eshadow - 1) + 0.5;
+	}
+	var whirlwindmult = 0;
+	if (whirlwind > 0)
+	{
+		whirlwindmult = 0.08 * (whirlwind - 1) + 0.5;
+	}
+	var swipemult = 0;
+	if (swipe > 0)
+	{
+		swipemult = 0.12 * (swipe - 1) + 1.2;
+	}
+	var mcold = cold * (1 + coldmult);
+	var mfire = fire * (1 + firemult);
+	var mlightning = lightning * (1 + lightningmult);
+	var mshadow = shadow * (1 + shadowmult);
+	var basemult = basedmg * (1 + surgemult + evenflowmult + convergencemult + shattermult);
+	function elemmult(cr)
+	{
+		return (mcold + mfire * cr * 0.01 + mlightning + mshadow) * (1 + convergencemult)
+	}
+	var firststrikecrit =  10 * (firststrike - 1) + 100;
+	var critreg = crit / 100;
+	var critfirst = (crit + firststrikecrit) / 100;
+	var finaldmg = basemult + elemmult(100);
+	var finaldmgwhirlwind = basemult * whirlwindmult + elemmult(100);
+	var finaldmgswipe = basemult * swipemult * (attackspeed / 100) + elemmult(100);
+	var finaldmg2 = (basemult + elemmult(crit)) * critreg;
+	var finaldmgwhirlwind2 = (basemult * whirlwindmult + elemmult(crit)) * critreg;
+	var finaldmgswipe2 = (basemult * swipemult * (attackspeed / 100) + elemmult(crit)) * critreg;
+	var finaldmg3 = (basemult + elemmult(crit + firststrikecrit)) * critfirst;
+	var finaldmgwhirlwind3 = (basemult * whirlwindmult + elemmult(crit + firststrikecrit)) * critfirst;
+	var finaldmgswipe3 = (basemult * swipemult * (attackspeed / 100) + elemmult(crit + firststrikecrit)) * critfirst;
+	var critdmg = finaldmg * crit * 0.01;
+	console.log(finaldmg + "/" + whirlwindmult + "/" + swipemult);
+	var output = document.getElementById('output').innerHTML = "alpha: " + parseInt(finaldmg) + "/" + parseInt(finaldmg2) + "/" + parseInt(finaldmg3) + '<br>whirlwind alpha: ' + parseInt(finaldmgwhirlwind) + "/" + parseInt(finaldmgwhirlwind2) + "/" + parseInt(finaldmgwhirlwind3)  + '<br>swipe alpha: ' + parseInt(finaldmgswipe) + "/" + parseInt(finaldmgswipe2) + "/" + parseInt(finaldmgswipe3);
+	
+	if (false)
+	{
+		var colossus = document.getElementById('colossus').value;
+		var w1d = parseInt(document.getElementById('w1d').value);
+		var w2d = parseInt(document.getElementById('w2d').value);
+		var pcd = basedmg;
+		if (colossus > 0)
+		{
+			console.log("b");
+			var colossusmult = 0.02 * (colossus - 1) + 0.75;
+			pcd = ((w1d + w2d) / 2) * colossusmult + dmgnowep;
+		}
+	}
+}
+math();
+</script>
+<style>
+label, input
+{
+    display: block;
+    margin-bottom: 2px;
+}
+</style>
